@@ -1,0 +1,9 @@
+# Ignore Lists
+.ipynb_checkpoints/
+data/
+output/
+
+# Exceptions
+!data/datasets/anime_clean.csv
+!data/binary/anime_metadata.npy
+!data/binary/animeFeaturesTfidf.npz
