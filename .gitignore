@@ -2,6 +2,7 @@
 .ipynb_checkpoints/
 data/
 output/
+*.pyc
 
 # Exceptions
 !data/datasets/anime_clean.csv
