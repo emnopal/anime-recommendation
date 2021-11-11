@@ -7,7 +7,7 @@ from utils.exporting import (
 
 
 if __name__ == "__main__":
-    dataset = "data/datasets/anime_clean.csv"
+    dataset = "data/dataset/anime_clean.csv"
     vector = "data/binary/anime_metadata.npy"
     vector1 = "data/binary/animeFeaturesTfidf.npz"
     content = ContentBasedFiltering(dataset=dataset, vector1=vector, vector2=vector1)  # noqa
