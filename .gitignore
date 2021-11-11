@@ -3,6 +3,7 @@
 data/
 output/
 *.pyc
+.vscode/
 
 # Exceptions
 !data/datasets/anime_clean.csv
