@@ -1,3 +1,15 @@
+"""
+Due to GitHub maximum file size limit,
+so i don't include the dataset in the repository.
+If you want to download or use dataset, please go to the following link:
+https://www.kaggle.com/hernan4444/anime-recommendation-database-2020
+
+Binary file is not included in the repository too.
+But you can generate by yourself in this_repository/notebook file
+to create *.npz. and *.npy files.
+"""
+
+
 import sys; sys.path.append('..')  # noqa
 
 import pandas as pd
@@ -115,7 +127,10 @@ class ContentBasedFiltering:
             return query, vectorModels.drop_duplicates().drop(columns=['Features', 'name_lower']).sort_values(  # noqa
                 by="Score", ascending=False)
 
-    def mostSimilarByIndex(self, query_index, n=20, show="all"):
+    def mostSimilarByIndex(self, mal_id, n=20, show="all"):
+        df = self._getDataset().copy()
+        query = df[df.MAL_ID == mal_id].drop(columns=['Features', 'name_lower'])
+        query_index = query.index
 
         if self.vector2 is None:
             vectorModels = self._vectorToModels(query_index=query_index, n=n)
@@ -123,12 +138,12 @@ class ContentBasedFiltering:
                 pd.set_option('display.max_rows', len(vectorModels))
                 print(
                     f"Generated total dataframe with {vectorModels.shape[0]} rows and {vectorModels.shape[1]} columns")  # noqa
-                return vectorModels.drop_duplicates().drop(columns=['Features', 'name_lower']).sort_values(  # noqa
+                return query, vectorModels.drop_duplicates().drop(columns=['Features', 'name_lower']).sort_values(  # noqa
                     by="Score", ascending=False)
             pd.set_option('display.max_rows', int(show))
             print(
                 f"Generated dataframe with {vectorModels.shape[0]} rows and {vectorModels.shape[1]} columns")  # noqa
-            return vectorModels.drop_duplicates().drop(columns=['Features', 'name_lower']).sort_values(  # noqa
+            return query, vectorModels.drop_duplicates().drop(columns=['Features', 'name_lower']).sort_values(  # noqa
                 by="Score", ascending=False)
 
         else:
@@ -139,10 +154,10 @@ class ContentBasedFiltering:
                 pd.set_option('display.max_rows', len(vectorModels))
                 print(
                     f"Generated total dataframe with {vectorModels.shape[0]} rows and {vectorModels.shape[1]} columns")  # noqa
-                return vectorModels.drop_duplicates().drop(columns=['Features', 'name_lower']).sort_values(  # noqa
+                return query, vectorModels.drop_duplicates().drop(columns=['Features', 'name_lower']).sort_values(  # noqa
                     by="Score", ascending=False)
             pd.set_option('display.max_rows', int(show))
             print(
                 f"Generated dataframe with {vectorModels.shape[0]} rows and {vectorModels.shape[1]} columns")  # noqa
-            return vectorModels.drop_duplicates().drop(columns=['Features', 'name_lower']).sort_values(  # noqa
+            return query, vectorModels.drop_duplicates().drop(columns=['Features', 'name_lower']).sort_values(  # noqa
                 by="Score", ascending=False)
