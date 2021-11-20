@@ -62,6 +62,22 @@ class ContentBasedFiltering:
             return nameContains
         return nameContains
 
+    def animeSearchById(self, id, n=5, sortByScore=True):
+        df = self._getDataset().copy()
+        idQuery = df[df.MAL_ID == id].drop(columns=['Features', 'name_lower'])
+
+        if sortByScore:
+            idQuery = idQuery.sort_values(
+                by="Score", ascending=False)
+
+        if n in ['all', 'All']:
+            pd.set_option('display.max_rows', len(idQuery))
+        else:
+            pd.set_option('display.max_rows', n)
+            idQuery = idQuery[:n]
+            return idQuery
+        return idQuery
+
     def _getSimilar(self, vector=None, query_index=None, n=50):
         df = self._getDataset().copy()
         distances, indices = defineModels(
