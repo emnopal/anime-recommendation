@@ -29,8 +29,8 @@ async def home(request: Request):
 
 
 # Anime ID, Find most similar anime from MAL (My Anime List) ID
-@app.get("/{anime_id}")
-@app.get("/id/{anime_id}")
+@app.get("/api/{anime_id}")
+@app.get("/api/id/{anime_id}")
 async def anime_by_id(anime_id: int):
     try:
         dataset, vector, vector1 = getAnime()
@@ -41,8 +41,8 @@ async def anime_by_id(anime_id: int):
         return errorMessageByNotFoundError(anime_id)
 
 
-@app.get("/{anime_id}/get/{n}")
-@app.get("/id/{anime_id}/get/{n}")
+@app.get("/api/{anime_id}/get/{n}")
+@app.get("/api/id/{anime_id}/get/{n}")
 async def get_n_anime_by_id(anime_id: int, n: int):
     try:
         n = int(n)
@@ -55,7 +55,7 @@ async def get_n_anime_by_id(anime_id: int, n: int):
 
 
 # Anime Name, Find most similar anime from name
-@app.get("/name/{anime_name}")
+@app.get("/api/name/{anime_name}")
 async def anime_by_name(anime_name: str):
     dataset, vector, vector1 = getAnime()
     content = ContentBasedFiltering(dataset=dataset, vector1=vector, vector2=vector1)  # noqa
@@ -63,7 +63,7 @@ async def anime_by_name(anime_name: str):
     return convert_to_json_api(OriginalsDf, similarDf)
 
 
-@app.get("/name/{anime_name}/get/{n}")
+@app.get("/api/name/{anime_name}/get/{n}")
 async def get_n_anime_by_name(anime_name: str, n: int):
     n = int(n)
     dataset, vector, vector1 = getAnime()
