@@ -40,7 +40,7 @@ By default, this repository doesn't contains any dataset, you can download and g
 # Generate to SQL
 By default, this app is using MySQL as databases to store the datasets, if you don't want to use MySQL you can edit some of codes to works with csv data.
 
-But if you want to use MySQL you can generate some codes:
+But if you want to use MySQL you can run some codes:
   1. `python grant_sql.py` to create new user and grants the user privilege
   2. `python generate_sql.py` to convert CSV to SQL
 
