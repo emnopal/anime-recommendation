@@ -26,16 +26,23 @@ from .model import (
 
 class ContentBasedFiltering:
 
-    def __init__(self, dataset, vector1, vector2=None):
+    def __init__(self, dataset, vector1, vector2=None, conn=None, index_col=None):
         self.dataset = dataset
         if vector2 is None:
             self.vector1 = vector1
         else:
             self.vector1 = vector1
             self.vector2 = vector2
+        self.conn = conn
+        self.index_col = index_col
 
     def _getDataset(self):
-        return readDataset(self.dataset)
+        if isinstance(self.dataset, str):
+            return readDataset(self.dataset, self.conn, self.index_col)
+        if isinstance(self.dataset, pd.DataFrame):
+            return self.dataset
+        else:
+            raise TypeError("dataset type not understand")
 
     def _getVector(self):
         if self.vector2 is None:
@@ -47,12 +54,12 @@ class ContentBasedFiltering:
         df = self._getDataset().copy()
         nameQuery = nameQuery.lower()
 
-        nameContains = df.loc[df.name_lower.str.contains(
-            nameQuery, na=False)].drop(columns=['Features', 'name_lower'])
+        nameContains = df.loc[df.animeNameLower.str.contains(
+            nameQuery, na=False)].drop(columns=['animeFeatures', 'animeNameLower'])
 
         if sortByScore:
             nameContains = nameContains.sort_values(
-                by="Score", ascending=False)
+                by="animeScore", ascending=False)
 
         if n in ['all', 'All']:
             pd.set_option('display.max_rows', len(nameContains))
@@ -64,11 +71,11 @@ class ContentBasedFiltering:
 
     def animeSearchById(self, id, n=5, sortByScore=True):
         df = self._getDataset().copy()
-        idQuery = df[df.MAL_ID == id].drop(columns=['Features', 'name_lower'])
+        idQuery = df[df.animeID == id].drop(columns=['animeFeatures', 'animeNameLower'])
 
         if sortByScore:
             idQuery = idQuery.sort_values(
-                by="Score", ascending=False)
+                by="animeScore", ascending=False)
 
         if n in ['all', 'All']:
             pd.set_option('display.max_rows', len(idQuery))
@@ -119,13 +126,13 @@ class ContentBasedFiltering:
                 pd.set_option('display.max_rows', len(vectorModels))
                 print(
                     f"Generated total dataframe with {vectorModels.shape[0]} rows and {vectorModels.shape[1]} columns")  # noqa
-                return query, vectorModels.drop_duplicates().drop(columns=['Features', 'name_lower']).sort_values(  # noqa
-                    by="Score", ascending=False)
+                return query, vectorModels.drop_duplicates().drop(columns=['animeFeatures', 'animeNameLower']).sort_values(  # noqa
+                    by="animeScore", ascending=False)
             pd.set_option('display.max_rows', int(show))
             print(
                 f"Generated dataframe with {vectorModels.shape[0]} rows and {vectorModels.shape[1]} columns")  # noqa
-            return query, vectorModels.drop_duplicates().drop(columns=['Features', 'name_lower']).sort_values(  # noqa
-                by="Score", ascending=False)
+            return query, vectorModels.drop_duplicates().drop(columns=['animeFeatures', 'animeNameLower']).sort_values(  # noqa
+                by="animeScore", ascending=False)
 
         else:
             vectorModels0, vectorModels1 = self._vectorToModels(
@@ -135,17 +142,17 @@ class ContentBasedFiltering:
                 pd.set_option('display.max_rows', len(vectorModels))
                 print(
                     f"Generated total dataframe with {vectorModels.shape[0]} rows and {vectorModels.shape[1]} columns")  # noqa
-                return query, vectorModels.drop_duplicates().drop(columns=['Features', 'name_lower']).sort_values(  # noqa
-                    by="Score", ascending=False)
+                return query, vectorModels.drop_duplicates().drop(columns=['animeFeatures', 'animeNameLower']).sort_values(  # noqa
+                    by="animeScore", ascending=False)
             pd.set_option('display.max_rows', int(show))
             print(
                 f"Generated dataframe with {vectorModels.shape[0]} rows and {vectorModels.shape[1]} columns")  # noqa
-            return query, vectorModels.drop_duplicates().drop(columns=['Features', 'name_lower']).sort_values(  # noqa
-                by="Score", ascending=False)
+            return query, vectorModels.drop_duplicates().drop(columns=['animeFeatures', 'animeNameLower']).sort_values(  # noqa
+                by="animeScore", ascending=False)
 
     def mostSimilarByIndex(self, mal_id, n=20, show="all"):
         df = self._getDataset().copy()
-        query = df[df.MAL_ID == mal_id].drop(columns=['Features', 'name_lower'])
+        query = df[df.animeID == mal_id].drop(columns=['animeFeatures', 'animeNameLower'])
         query_index = query.index
 
         if self.vector2 is None:
@@ -154,13 +161,13 @@ class ContentBasedFiltering:
                 pd.set_option('display.max_rows', len(vectorModels))
                 print(
                     f"Generated total dataframe with {vectorModels.shape[0]} rows and {vectorModels.shape[1]} columns")  # noqa
-                return query, vectorModels.drop_duplicates().drop(columns=['Features', 'name_lower']).sort_values(  # noqa
-                    by="Score", ascending=False)
+                return query, vectorModels.drop_duplicates().drop(columns=['animeFeatures', 'animeNameLower']).sort_values(  # noqa
+                    by="animeScore", ascending=False)
             pd.set_option('display.max_rows', int(show))
             print(
                 f"Generated dataframe with {vectorModels.shape[0]} rows and {vectorModels.shape[1]} columns")  # noqa
-            return query, vectorModels.drop_duplicates().drop(columns=['Features', 'name_lower']).sort_values(  # noqa
-                by="Score", ascending=False)
+            return query, vectorModels.drop_duplicates().drop(columns=['animeFeatures', 'animeNameLower']).sort_values(  # noqa
+                by="animeScore", ascending=False)
 
         else:
             vectorModels0, vectorModels1 = self._vectorToModels(
@@ -170,10 +177,10 @@ class ContentBasedFiltering:
                 pd.set_option('display.max_rows', len(vectorModels))
                 print(
                     f"Generated total dataframe with {vectorModels.shape[0]} rows and {vectorModels.shape[1]} columns")  # noqa
-                return query, vectorModels.drop_duplicates().drop(columns=['Features', 'name_lower']).sort_values(  # noqa
-                    by="Score", ascending=False)
+                return query, vectorModels.drop_duplicates().drop(columns=['animeFeatures', 'animeNameLower']).sort_values(  # noqa
+                    by="animeScore", ascending=False)
             pd.set_option('display.max_rows', int(show))
             print(
                 f"Generated dataframe with {vectorModels.shape[0]} rows and {vectorModels.shape[1]} columns")  # noqa
-            return query, vectorModels.drop_duplicates().drop(columns=['Features', 'name_lower']).sort_values(  # noqa
-                by="Score", ascending=False)
+            return query, vectorModels.drop_duplicates().drop(columns=['animeFeatures', 'animeNameLower']).sort_values(  # noqa
+                by="animeScore", ascending=False)

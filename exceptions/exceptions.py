@@ -3,3 +3,9 @@ class FileNotSupported(Exception):
 
 class NotFoundError(Exception):
     pass
+
+class ConnectionError(Exception):
+    pass
+
+class DirectoryNotFound(Exception):
+    pass

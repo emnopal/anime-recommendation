@@ -4,10 +4,16 @@ from src.app import ContentBasedFiltering
 from utils.exporting import convert_to_json_api
 from exceptions.error_msg import errorMessageByNotFoundError
 from exceptions.exceptions import NotFoundError
+from src.fetch_from_sql import connect
+from utils.preprocessing import readDataset
 
 
 def getAnime():
-    dataset = "data/dataset/anime_clean.csv"
+    conn = connect()
+    set_index = 'animeIndex'
+    db_name = 'animedb'
+    query = f'select * from {db_name}.anime'
+    dataset = readDataset(dataset=query, con=conn, index_col=set_index)
     vector = "data/binary/anime_metadata.npy"
     vector1 = "data/binary/animeFeaturesTfidf.npz"
     return dataset, vector, vector1
