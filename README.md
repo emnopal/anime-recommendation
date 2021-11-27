@@ -41,8 +41,8 @@ By default, this repository doesn't contains any dataset, you can download and g
 By default, this app is using MySQL as databases to store the datasets, if you don't want to use MySQL you can edit some of codes to works with csv data.
 
 But if you want to use MySQL you can generate some codes:
-  1. Generate `python grant_sql.py` then,
-  2. Generate `python generate_sql.py`
+  1. `python grant_sql.py` to create new user and grants the user privilege
+  2. `python generate_sql.py` to convert CSV to SQL
 
 # Models
 This app generates binary data using NLP (Natural Language Processing) with TfidfVectorizer and LabelBinarizer technique, all of technique can be generated from `python generate_data.py` after it, all of binaries appends to K Nearest Neighbors to created Machine Learning models.
