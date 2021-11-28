@@ -26,15 +26,13 @@ from .model import (
 
 class ContentBasedFiltering:
 
-    def __init__(self, dataset, vector1, vector2=None, conn=None, index_col=None):
-        self.dataset = dataset
+    def __init__(self, vector1, vector2=None, conn=None):
         if vector2 is None:
             self.vector1 = vector1
         else:
             self.vector1 = vector1
             self.vector2 = vector2
         self.conn = conn
-        self.index_col = index_col
 
     def _getDataset(self):
         if isinstance(self.dataset, str):
