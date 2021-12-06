@@ -64,8 +64,9 @@ class ContentBasedFiltering:
         else:
             df = self._getDataset().copy()
             nameQuery = nameQuery.lower()
-            nameContains = df.loc[df.animeNameLower.str.contains(nameQuery, na=False)]
+            nameContains = df.loc[df.animeName.str.contains(nameQuery, na=False, case=False)]
             nameContains = nameContains.sort_values(by="animeScore", ascending=False)
+            nameContains = nameContains[:n]
         pd.set_option('display.max_rows', len(nameContains))
         return nameContains
 

@@ -11,7 +11,7 @@ from exceptions.exceptions import (
 
 def readDataset(dataset, con=None, index_col=None):#'animeIndex'
     if ".csv" in dataset:
-        return pd.read_csv(dataset, index_col=index_col)
+        return pd.read_csv(dataset, index_col=None)
     if "select" == dataset[:6]:
         if con is None:
             raise ConnectionError("connection is not defined")
