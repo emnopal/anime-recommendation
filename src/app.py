@@ -23,6 +23,8 @@ from .model import (
     defineModels
 )
 
+from utils.profiling import timeit
+
 ALLOWED_DB_ARGS = ['db', 'sql', 'useDB', 'useSQL', 'usedb', 'use db', 'use DB', 'use SQL']
 
 class ContentBasedFiltering:
@@ -38,6 +40,7 @@ class ContentBasedFiltering:
         self.dataset = dataset
 
 
+    @timeit
     def _getDataset(self):
         if isinstance(self.dataset, str):
             if self.dataset in ALLOWED_DB_ARGS:
@@ -49,13 +52,14 @@ class ContentBasedFiltering:
             raise TypeError("dataset type not understand")
 
 
+    @timeit
     def _getVector(self):
         if self.vector2 is None:
             return readBinary(self.vector1)
         else:
             return readBinary(self.vector1), readBinary(self.vector2)
 
-
+    @timeit
     def animeSearch(self, nameQuery, n=5):
         if self.dataset in ALLOWED_DB_ARGS:
             query = f'SELECT * from animedb.anime WHERE animeName LIKE "%{nameQuery}%" ORDER BY animeScore DESC LIMIT {n};'
@@ -70,7 +74,7 @@ class ContentBasedFiltering:
         pd.set_option('display.max_rows', len(nameContains))
         return nameContains
 
-
+    @timeit
     def animeSearchById(self, id):
         if self.dataset in ALLOWED_DB_ARGS:
             query = f'SELECT * from animedb.anime WHERE animeID = {id};'
@@ -81,7 +85,7 @@ class ContentBasedFiltering:
             idQuery = df[df.animeID == id]
         return idQuery
 
-
+    @timeit
     def _getSimilar(self, vector=None, query_index=None, n=50):
         distances, indices = defineModels(vector=vector, query_index=query_index, n=n)
         if self.dataset in ALLOWED_DB_ARGS:
@@ -106,7 +110,7 @@ class ContentBasedFiltering:
         pd.set_option('display.max_rows', len(results_df))
         return results_df
 
-
+    @timeit
     def _vectorToModels(self, query_index=None, n=50):
         if self.vector2 is None:
             vector = self._getVector()
@@ -117,7 +121,7 @@ class ContentBasedFiltering:
             self.model2 = self._getSimilar(vector=vector2, query_index=query_index, n=n)
             return self.model1, self.model2
 
-
+    @timeit
     def mostSimilarByName(self, nameQuery, n=20):
         query = self.animeSearch(nameQuery=nameQuery, n=1)
         query_index = query.index[0]
@@ -130,7 +134,7 @@ class ContentBasedFiltering:
         print(f"Generated dataframe with {vectorModels.shape[0]} rows and {vectorModels.shape[1]} columns")  # noqa
         return query, vectorModels.drop_duplicates().sort_values(by="animeScore", ascending=False)
 
-
+    @timeit
     def mostSimilarByIndex(self, mal_id, n=20):
         query = self.animeSearchById(mal_id)
         query_index = query.index

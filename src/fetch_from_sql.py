@@ -7,6 +7,9 @@ from dotenv import load_dotenv
 load_dotenv()
 pwd = os.environ['MYSQL_DB_PASSWORD']
 
+from utils.profiling import timeit
+
+@timeit
 def connections(host='localhost', user='wibu212', password=pwd):
     try:
         print("Success connect to MySQL!")
@@ -14,6 +17,7 @@ def connections(host='localhost', user='wibu212', password=pwd):
     except:
         raise Exception("Error connecting to MySQL", Error)
 
+@timeit
 def connect_to_db(conn, db_name):
     try:
         if conn.is_connected():
@@ -27,6 +31,7 @@ def connect_to_db(conn, db_name):
     except Error as e:
         print("Error while connecting to MySQL", e)
 
+@timeit
 def connect(db_name='animedb'):
     conn = connections()
     connect_to_db(conn, db_name)

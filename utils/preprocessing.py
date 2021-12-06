@@ -9,6 +9,9 @@ from exceptions.exceptions import (
     FileNotSupported
 )
 
+from utils.profiling import timeit
+
+@timeit
 def readDataset(dataset, con=None, index_col=None):#'animeIndex'
     if ".csv" in dataset:
         return pd.read_csv(dataset, index_col=None)

@@ -6,6 +6,9 @@ from sklearn.neighbors import NearestNeighbors
 
 from exceptions.exceptions import NotFoundError
 
+from utils.profiling import timeit
+
+@timeit
 def defineModels(n, vector, query_index, *args, **kwargs):
     try:
         model_knn = NearestNeighbors(
