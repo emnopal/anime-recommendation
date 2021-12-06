@@ -34,7 +34,6 @@ class ToSQL:
                 print("Table is created....")
                 for i, row in df.iterrows():
                     if 'auto_increment' in query:
-                        # sql = f"INSERT INTO {db_name}.{table_name} VALUES ({i+1}, '%s', '%s', '%s', '%s', '%s')"
                         sql = f"INSERT INTO {db_name}.{table_name} VALUES {tuple({i+1}) + tuple('%s' for _ in range(len(df.columns)))}".replace(
                             "'", '')
                     else:
