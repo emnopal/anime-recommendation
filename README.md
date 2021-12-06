@@ -1,4 +1,4 @@
-# anime-recommendation [BETA]
+# anime-recommendation
 Anime recommendation using Machine Learning by using Content Based Filtering technique
 
 Due to GitHub maximum file size limit, so i don't include the dataset and binaries in the repository.
