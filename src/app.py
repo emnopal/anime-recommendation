@@ -37,6 +37,7 @@ class ContentBasedFiltering:
         self.index_col = index_col
         self.dataset = dataset
 
+
     def _getDataset(self):
         if isinstance(self.dataset, str):
             if self.dataset in ALLOWED_DB_ARGS:
@@ -47,40 +48,38 @@ class ContentBasedFiltering:
         else:
             raise TypeError("dataset type not understand")
 
+
     def _getVector(self):
         if self.vector2 is None:
             return readBinary(self.vector1)
         else:
             return readBinary(self.vector1), readBinary(self.vector2)
 
-    def animeSearch(self, nameQuery, n=5, sortByScore=True):
+
+    def animeSearch(self, nameQuery, n=5):
         if self.dataset in ALLOWED_DB_ARGS:
-            query = f'SELECT * from animedb.anime WHERE animeName LIKE "%{nameQuery}%" LIMIT {n};'
-            if sortByScore:
-                query = f'SELECT * from animedb.anime WHERE animeName LIKE "%{nameQuery}%" ORDER BY animeScore DESC LIMIT {n};'
+            query = f'SELECT * from animedb.anime WHERE animeName LIKE "%{nameQuery}%" ORDER BY animeScore DESC LIMIT {n};'
             nameContains = pd.read_sql(sql=query, con=self.conn, index_col=self.index_col)
             nameContains.index = nameContains.index - 1
-            pd.set_option('display.max_rows', len(nameContains))
-            return nameContains
         else:
             df = self._getDataset().copy()
             nameQuery = nameQuery.lower()
             nameContains = df.loc[df.animeNameLower.str.contains(nameQuery, na=False)]
-            if sortByScore:
-                nameContains = nameContains.sort_values(by="animeScore", ascending=False)
-            pd.set_option('display.max_rows', len(nameContains))
-            return nameContains
+            nameContains = nameContains.sort_values(by="animeScore", ascending=False)
+        pd.set_option('display.max_rows', len(nameContains))
+        return nameContains
+
 
     def animeSearchById(self, id):
         if self.dataset in ALLOWED_DB_ARGS:
             query = f'SELECT * from animedb.anime WHERE animeID = {id};'
             idQuery = pd.read_sql(sql=query, con=self.conn, index_col=self.index_col)
             idQuery.index = idQuery.index - 1
-            return idQuery
         else:
             df = self._getDataset().copy()
             idQuery = df[df.animeID == id]
-            return idQuery
+        return idQuery
+
 
     def _getSimilar(self, vector=None, query_index=None, n=50):
         distances, indices = defineModels(vector=vector, query_index=query_index, n=n)
@@ -94,8 +93,6 @@ class ContentBasedFiltering:
             result = tuple(map(lambda x: x+1, result))
             query = f"select * from animedb.anime where animeIndex in {result};"
             results_df = pd.read_sql(sql=query, con=self.conn, index_col=self.index_col)
-            pd.set_option('display.max_rows', len(results_df))
-            return results_df
         else:
             df = self._getDataset().copy()
             result = []
@@ -105,8 +102,9 @@ class ContentBasedFiltering:
                     continue
                 result.append(df.iloc[index])
             results_df = pd.DataFrame(result)
-            pd.set_option('display.max_rows', len(results_df))
-            return results_df
+        pd.set_option('display.max_rows', len(results_df))
+        return results_df
+
 
     def _vectorToModels(self, query_index=None, n=50):
         if self.vector2 is None:
@@ -118,48 +116,30 @@ class ContentBasedFiltering:
             self.model2 = self._getSimilar(vector=vector2, query_index=query_index, n=n)
             return self.model1, self.model2
 
-    def mostSimilarByName(self, nameQuery, n=20, show="all"):
-        query = self.animeSearch(nameQuery=nameQuery, n=1, sortByScore=True)
+
+    def mostSimilarByName(self, nameQuery, n=20):
+        query = self.animeSearch(nameQuery=nameQuery, n=1)
         query_index = query.index[0]
         if self.vector2 is None:
             vectorModels = self._vectorToModels(query_index=query_index, n=n)
-            if show in ["all", "All"]:
-                pd.set_option('display.max_rows', len(vectorModels))
-                print(f"Generated total data with {vectorModels.shape[0]} rows and {vectorModels.shape[1]} columns")
-                return query, vectorModels.drop_duplicates().sort_values(by="animeScore", ascending=False)
-            pd.set_option('display.max_rows', int(show))
-            print(f"Generated data with {vectorModels.shape[0]} rows and {vectorModels.shape[1]} columns")
-            return query, vectorModels.drop_duplicates().sort_values(by="animeScore", ascending=False)
         else:
             vectorModels0, vectorModels1 = self._vectorToModels(query_index=query_index, n=n)
             vectorModels = vectorModels1.append(vectorModels0)
-            if show in ["all", "All"]:
-                pd.set_option('display.max_rows', len(vectorModels))
-                print(f"Generated total dataframe with {vectorModels.shape[0]} rows and {vectorModels.shape[1]} columns")  # noqa
-                return query, vectorModels.drop_duplicates().sort_values(by="animeScore", ascending=False)
-            pd.set_option('display.max_rows', int(show))
-            print(f"Generated dataframe with {vectorModels.shape[0]} rows and {vectorModels.shape[1]} columns")  # noqa
-            return query, vectorModels.drop_duplicates().sort_values(by="animeScore", ascending=False)
+        pd.set_option('display.max_rows', len(vectorModels))
+        print(f"Generated dataframe with {vectorModels.shape[0]} rows and {vectorModels.shape[1]} columns")  # noqa
+        return query, vectorModels.drop_duplicates().sort_values(by="animeScore", ascending=False)
 
-    def mostSimilarByIndex(self, mal_id, n=20, show="all"):
+
+    def mostSimilarByIndex(self, mal_id, n=20):
         query = self.animeSearchById(mal_id)
         query_index = query.index
         if self.vector2 is None:
             vectorModels = self._vectorToModels(query_index=query_index, n=n)
-            if show in ["all", "All"]:
-                pd.set_option('display.max_rows', len(vectorModels))
-                print(f"Generated total dataframe with {vectorModels.shape[0]} rows and {vectorModels.shape[1]} columns")  # noqa
-                return query, vectorModels.drop_duplicates().sort_values(by="animeScore", ascending=False)
-            pd.set_option('display.max_rows', int(show))
-            print(f"Generated dataframe with {vectorModels.shape[0]} rows and {vectorModels.shape[1]} columns")
-            return query, vectorModels.drop_duplicates().sort_values(by="animeScore", ascending=False)
         else:
             vectorModels0, vectorModels1 = self._vectorToModels(query_index=query_index, n=n)
             vectorModels = vectorModels1.append(vectorModels0)
-            if show in ["all", "All"]:
-                pd.set_option('display.max_rows', len(vectorModels))
-                print(f"Generated total dataframe with {vectorModels.shape[0]} rows and {vectorModels.shape[1]} columns")  # noqa
-                return query, vectorModels.drop_duplicates().sort_values(by="animeScore", ascending=False)
-            pd.set_option('display.max_rows', int(show))
-            print(f"Generated dataframe with {vectorModels.shape[0]} rows and {vectorModels.shape[1]} columns")  # noqa
-            return query, vectorModels.drop_duplicates().sort_values(by="animeScore", ascending=False)
+        pd.set_option('display.max_rows', len(vectorModels))
+        print(f"Generated dataframe with {vectorModels.shape[0]} rows and {vectorModels.shape[1]} columns")  # noqa
+        return query, vectorModels.drop_duplicates().sort_values(by="animeScore", ascending=False)
+
+
