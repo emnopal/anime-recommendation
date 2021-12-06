@@ -1,5 +1,4 @@
 import os, sys; sys.path.append('..')
-import time
 import re
 
 import pandas as pd
@@ -12,6 +11,8 @@ from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.preprocessing import LabelBinarizer, MultiLabelBinarizer, MinMaxScaler
 
 from exceptions.exceptions import DirectoryNotFound
+
+from utils.profiling import timeit
 
 
 def check_path(path):
@@ -27,22 +28,14 @@ def check_files(path):
         print(f"Pass! {path}")
 
 def check_directory():
-    time.sleep(1)
     check_path("data")
-    time.sleep(1)
     check_path("data/binary")
-    time.sleep(1)
     check_path("data/dataset")
-    time.sleep(1)
     check_path("data/raw")
-    time.sleep(1)
 
 def check_files_in_directory():
-    time.sleep(1)
     check_files("data/raw/anime_with_synopsis.csv")
-    time.sleep(1)
     check_files("data/raw/anime.csv")
-    time.sleep(1)
 
 # source: https://www.kaggle.com/indralin/try-content-based-and-collaborative-filtering
 # Cleaning text
@@ -122,14 +115,13 @@ def create_dataset():
                 'name_lower': 'animeNameLower'
             }, axis=1)
 
-    anime.to_csv('data/dataset/anime_clean.csv', index=False)
-    print(f"Success generate new datasets to data/dataset/anime_clean.csv!")
     return anime
 
+@timeit
 def generate_binary():
     # Using anime metadata to filtering content
-
-    anime_metadata = create_dataset().copy()
+    anime = create_dataset()
+    anime_metadata = anime.copy()
 
     del anime_metadata['animeFeatures']
     del anime_metadata['animeName']
@@ -162,12 +154,18 @@ def generate_binary():
     animeFeatures = anime['animeFeatures'].copy()
     animeFeaturesTfidf = matVet.fit_transform(animeFeatures)
 
-    save_npz("../data/binary/animeFeaturesTfidf.npz", animeFeaturesTfidf)
+    save_npz("data/binary/animeFeaturesTfidf.npz", animeFeaturesTfidf)
     print(f"Success generate new binary to data/dataset/anime_metadata.npy!")
     print(f"Success generate new binary to data/dataset/animeFeaturesTfidf.npz!")
 
+def save_new_dataset():
+    create_dataset().drop(["animeNameLower", "animeFeatures"], axis=1).to_csv('data/dataset/anime_clean.csv', index=False)
+    print(f"Success save new datasets to data/dataset/anime_clean.csv!")
+
+@timeit
 def generate():
     check_directory()
     check_files_in_directory()
     create_dataset()
     generate_binary()
+    save_new_dataset()

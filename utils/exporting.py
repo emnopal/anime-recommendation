@@ -3,8 +3,9 @@ import os
 import json
 
 from utils.encoder import NpEncoder
+from utils.profiling import timeit
 
-
+@timeit
 def convert_to_html(df, df2=None, path=f"{os.getcwd()}/output"):
     if not os.path.exists(path):
         os.makedirs(path)
@@ -34,7 +35,7 @@ def convert_to_html(df, df2=None, path=f"{os.getcwd()}/output"):
             f.writelines(df_html)
         print(f"Open Here: {name}")
 
-
+@timeit
 def convert_to_json(df, df2=None, path=f"{os.getcwd()}/output"):
     if not os.path.exists(path):
         os.makedirs(path)
@@ -59,7 +60,7 @@ def convert_to_json(df, df2=None, path=f"{os.getcwd()}/output"):
         print(f"Open Here: {name}")
         return
 
-
+@timeit
 def convert_to_json_api(df, df2=None):
     if df2 is None:
         df_json = {}

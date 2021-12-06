@@ -5,28 +5,20 @@ from utils.exporting import convert_to_json_api
 from exceptions.error_msg import errorMessageByNotFoundError
 from exceptions.exceptions import NotFoundError
 from src.fetch_from_sql import connect
-from utils.preprocessing import readDataset
 
-
-def getAnime():
-    conn = connect()
-    set_index = 'animeIndex'
-    db_name = 'animedb'
-    query = f'select * from {db_name}.anime'
-    dataset = readDataset(dataset=query, con=conn, index_col=set_index)
-    vector = "data/binary/anime_metadata.npy"
-    vector1 = "data/binary/animeFeaturesTfidf.npz"
-    return dataset, vector, vector1
 
 def Anime():
-    dataset, vector, vector1 = getAnime()
-    content = ContentBasedFiltering(dataset=dataset, vector1=vector, vector2=vector1)  # noqa
+    conn = connect()
+    set_index = 'animeIndex'
+    vector = "data/binary/anime_metadata.npy"
+    vector1 = "data/binary/animeFeaturesTfidf.npz"
+    content = ContentBasedFiltering(vector1=vector, vector2=vector1, dataset='use SQL', index_col=set_index, conn=conn)
     return content
 
 def getAnimeById(anime_id):
     try:
         content = Anime()
-        OriginalsDf, similarDf = content.mostSimilarByIndex(anime_id, n=20)
+        OriginalsDf, similarDf = content.mostSimilarByIndex(anime_id, n=10)
         return convert_to_json_api(OriginalsDf, similarDf)
     except NotFoundError:
         return errorMessageByNotFoundError(anime_id)
@@ -42,7 +34,7 @@ def getnAnimeById(anime_id, n):
 
 def getAnimeByName(anime_name):
     content = Anime()
-    OriginalsDf, similarDf = content.mostSimilarByName(anime_name, n=20)
+    OriginalsDf, similarDf = content.mostSimilarByName(anime_name, n=10)
     return convert_to_json_api(OriginalsDf, similarDf)
 
 def getnAnimeByName(anime_name, n):

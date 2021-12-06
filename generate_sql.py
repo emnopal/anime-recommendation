@@ -20,8 +20,6 @@ if __name__ == '__main__':
                 animeRanked int,
                 animePopularity int,
                 animeFavorites int,
-                animeFeatures text,
-                animeNameLower varchar(1000),
                 primary key (animeIndex)
             );
             """

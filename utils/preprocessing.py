@@ -9,7 +9,6 @@ from exceptions.exceptions import (
     FileNotSupported
 )
 
-
 def readDataset(dataset, con=None, index_col=None):#'animeIndex'
     if ".csv" in dataset:
         return pd.read_csv(dataset, index_col=index_col)
@@ -22,10 +21,8 @@ def readDataset(dataset, con=None, index_col=None):#'animeIndex'
     else:
         raise FileNotSupported("file type not supported")
 
-
 def readnpz(file):
     return load_npz(file)
-
 
 def readnpy(file):
     return np.load(file)

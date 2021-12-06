@@ -8,6 +8,7 @@ import pandas as pd
 
 from mysql.connector import Error
 from dotenv import load_dotenv
+from utils.profiling import timeit
 
 load_dotenv()
 
@@ -17,6 +18,7 @@ class ToSQL:
     def __init__(self, host='localhost', user='wibu212', password=pwd):
         self.conn = mysql.connect(host=host, user=user, password=password)
 
+    @timeit
     def from_csv(self, csv_files, db_name, table_name, query):
         df = pd.read_csv(csv_files)
         try:
