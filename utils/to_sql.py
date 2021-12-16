@@ -34,11 +34,9 @@ class ToSQL:
                 print("Table is created....")
                 for i, row in df.iterrows():
                     if 'auto_increment' in query:
-                        sql = f"INSERT INTO {db_name}.{table_name} VALUES {tuple({i+1}) + tuple('%s' for _ in range(len(df.columns)))}".replace(
-                            "'", '')
+                        sql = f"INSERT INTO {db_name}.{table_name} VALUES {tuple({i+1}) + tuple('%s' for _ in range(len(df.columns)))}"
                     else:
-                        sql = f"INSERT INTO {db_name}.{table_name} VALUES {tuple('%s' for _ in range(len(df.columns)))}".replace(
-                            "'", '')
+                        sql = f"INSERT INTO {db_name}.{table_name} VALUES {tuple('%s' for _ in range(len(df.columns)))}"
                     cursor.execute(sql, tuple(row))
                     self.conn.commit()
                 print(f"Success convert {csv_files} to MySQL db")

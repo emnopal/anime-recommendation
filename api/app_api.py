@@ -24,6 +24,10 @@ def getAnimeById(anime_id) -> dict:
         return convert_to_json_api(OriginalsDf, similarDf)
     except NotFoundError:
         return errorMessageByNotFoundError(anime_id)
+    except ValueError:
+        return errorMessageByNotFoundError(anime_id)
+    except TypeError:
+        return errorMessageByNotFoundError(anime_id)
 
 @timeit
 def getnAnimeById(anime_id, n) -> dict:
@@ -34,6 +38,10 @@ def getnAnimeById(anime_id, n) -> dict:
         return convert_to_json_api(OriginalsDf, similarDf)
     except NotFoundError:
         return errorMessageByNotFoundError(anime_id)
+    except ValueError:
+        return errorMessageByNotFoundError(anime_id)
+    except TypeError:
+        return errorMessageByNotFoundError(anime_id)
 
 @timeit
 def getAnimeByName(anime_name) -> dict:
@@ -43,16 +51,22 @@ def getAnimeByName(anime_name) -> dict:
 
 @timeit
 def getnAnimeByName(anime_name, n) -> dict:
-    n = int(n)
-    content = Anime()
-    OriginalsDf, similarDf = content.mostSimilarByName(anime_name, n=n)
-    return convert_to_json_api(OriginalsDf, similarDf)
+    try:
+        n = int(n)
+        content = Anime()
+        OriginalsDf, similarDf = content.mostSimilarByName(anime_name, n=n)
+        return convert_to_json_api(OriginalsDf, similarDf)
+    except TypeError:
+        return errorMessageByNotFoundError(anime_name)
 
 @timeit
 def getAnimeName(anime_name) -> dict:
-    content = Anime()
-    AnimeDataFrame = content.animeSearch(anime_name, n=1)
-    return convert_to_json_api(AnimeDataFrame)
+    try:
+        content = Anime()
+        AnimeDataFrame = content.animeSearch(anime_name, n=1)
+        return convert_to_json_api(AnimeDataFrame)
+    except TypeError:
+        return errorMessageByNotFoundError(anime_name)
 
 @timeit
 def getAnimeId(anime_id) -> dict:
@@ -62,9 +76,12 @@ def getAnimeId(anime_id) -> dict:
 
 @timeit
 def getnAnimeName(anime_name, n) -> dict:
-    content = Anime()
-    AnimeDataFrame = content.animeSearch(anime_name, n=n)
-    return convert_to_json_api(AnimeDataFrame)
+    try:
+        content = Anime()
+        AnimeDataFrame = content.animeSearch(anime_name, n=n)
+        return convert_to_json_api(AnimeDataFrame)
+    except TypeError:
+        return errorMessageByNotFoundError(anime_name)
 
 @timeit
 def getnAnimeId(anime_id, n) -> dict:

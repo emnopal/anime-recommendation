@@ -26,48 +26,51 @@ async def api_docs():
 
 
 # Anime ID, Find most similar anime from MAL (My Anime List) ID
-@app.get("/api/recommendations/{anime_id}")
-@app.get("/api/recommendations/id/{anime_id}")
-async def anime_by_id(anime_id: int):
-    return getAnimeById(anime_id=anime_id)
+@app.get("/api/recommendations/")
+async def get_anime_recommendation(anime_id: int = None, n: int = None, anime_name: str = None):
+    if not n:
+        if not anime_name:
+            return getAnimeById(anime_id=anime_id)
+        if not anime_id:
+            return getAnimeByName(anime_name=anime_name)
+        if not anime_name and not anime_id:
+            return {
+                "error": "parameter id and name required"
+            }
+    else:
+        if not anime_name:
+            return getnAnimeById(anime_id=anime_id, n=n)
+        if not anime_id:
+            print(anime_name)
+            return getnAnimeByName(anime_name=anime_name, n=n)
+        if not anime_name and not anime_id:
+            return {
+                "error": "parameter id and name required"
+            }
 
 
-@app.get("/api/recommendations/{anime_id}/get/{n}")
-@app.get("/api/recommendations/id/{anime_id}/get/{n}")
-async def get_n_anime_by_id(anime_id: int, n: int):
-    return getnAnimeById(anime_id=anime_id, n=n)
-
-
-# Anime Name, Find most similar anime from name
-@app.get("/api/recommendations/name/{anime_name}")
-async def anime_by_name(anime_name: str):
-    return getAnimeByName(anime_name=anime_name)
-
-
-@app.get("/api/recommendations/name/{anime_name}/get/{n}")
-async def get_n_anime_by_name(anime_name: str, n: int):
-    return getnAnimeByName(anime_name=anime_name, n=n)
-
-
-# Get Anime DataFrame
+# Get Anime Database
 # Get Anime name
-@app.get("/api/data/name/{anime_name}")
-async def anime_name(anime_name: str):
-    return getAnimeName(anime_name=anime_name)
+@app.get("/api/data/")
+async def get_anime_name(anime_id: int = None, n: int = None, anime_name: str = None):
 
-# Get Anime id
-@app.get("/api/data/{anime_id}")
-@app.get("/api/data/id/{anime_id}")
-async def anime_name(anime_id: int):
-    return getAnimeId(anime_id=anime_id)
+    if not n:
+        if not anime_name:
+            return getAnimeId(anime_id=anime_id)
+        if not anime_id:
+            return getAnimeName(anime_name=anime_name)
+        if not anime_name and not anime_id:
+            return {
+                "error": "parameter id and name required"
+            }
+    else:
+        if not anime_name:
+            return getnAnimeId(anime_id=anime_id, n=n)
+        if not anime_id:
+            return getnAnimeName(anime_name=anime_name, n=n)
+        if not anime_name and not anime_id:
+            return {
+                "error": "parameter id and name required"
+            }
 
-# Get Anime name
-@app.get("/api/data/name/{anime_name}/get/{n}")
-async def anime_name(anime_name: str, n: int):
-    return getnAnimeName(anime_name=anime_name, n=n)
 
-# Get Anime id
-@app.get("/api/data/{anime_id}/get/{n}")
-@app.get("/api/data/id/{anime_id}/get/{n}")
-async def anime_name(anime_id: int, n: int):
-    return getnAnimeId(anime_id=anime_id, n=n)

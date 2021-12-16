@@ -10,6 +10,7 @@ to create *.npz. and *.npy files.
 """
 
 
+from os import name
 import sys; sys.path.append('..')  # noqa
 
 import pandas as pd
@@ -96,7 +97,12 @@ class ContentBasedFiltering:
                     continue
                 result.append(index)
             result = tuple(map(lambda x: x+1, result))
-            query = f"select * from animedb.anime where animeIndex in {result};"
+            if len(result) == 1:
+                query = f"select * from animedb.anime where animeIndex = {result[0]};"
+            elif len(result) < 1:
+                return None
+            else:
+                query = f"select * from animedb.anime where animeIndex in {result};"
             results_df = pd.read_sql(sql=query, con=self.conn, index_col=self.index_col)
         else:
             df = self._getDataset().copy()
@@ -123,28 +129,36 @@ class ContentBasedFiltering:
 
     @timeit
     def mostSimilarByName(self, nameQuery, n=20):
-        query = self.animeSearch(nameQuery=nameQuery, n=1)
-        query_index = query.index[0]
-        if self.vector2 is None:
-            vectorModels = self._vectorToModels(query_index=query_index, n=n)
-        else:
-            vectorModels0, vectorModels1 = self._vectorToModels(query_index=query_index, n=n)
-            vectorModels = vectorModels1.append(vectorModels0)
-        pd.set_option('display.max_rows', len(vectorModels))
-        print(f"Generated dataframe with {vectorModels.shape[0]} rows and {vectorModels.shape[1]} columns")  # noqa
-        return query, vectorModels.drop_duplicates().sort_values(by="animeScore", ascending=False)
+        try:
+            query = self.animeSearch(nameQuery=nameQuery, n=1)
+            query_index = query.index[0]
+            if self.vector2 is None:
+                vectorModels = self._vectorToModels(query_index=query_index, n=n)
+            else:
+                vectorModels0, vectorModels1 = self._vectorToModels(query_index=query_index, n=n)
+                vectorModels = vectorModels1.append(vectorModels0)
+            pd.set_option('display.max_rows', len(vectorModels))
+            print(f"Generated dataframe with {vectorModels.shape[0]} rows and {vectorModels.shape[1]} columns")  # noqa
+            return query, vectorModels.drop_duplicates().sort_values(by="animeScore", ascending=False)
+        except AttributeError:
+            return None
+        except IndexError:
+            return None
 
     @timeit
     def mostSimilarByIndex(self, mal_id, n=20):
-        query = self.animeSearchById(mal_id)
-        query_index = query.index
-        if self.vector2 is None:
-            vectorModels = self._vectorToModels(query_index=query_index, n=n)
-        else:
-            vectorModels0, vectorModels1 = self._vectorToModels(query_index=query_index, n=n)
-            vectorModels = vectorModels1.append(vectorModels0)
-        pd.set_option('display.max_rows', len(vectorModels))
-        print(f"Generated dataframe with {vectorModels.shape[0]} rows and {vectorModels.shape[1]} columns")  # noqa
-        return query, vectorModels.drop_duplicates().sort_values(by="animeScore", ascending=False)
+        try:
+            query = self.animeSearchById(mal_id)
+            query_index = query.index
+            if self.vector2 is None:
+                vectorModels = self._vectorToModels(query_index=query_index, n=n)
+            else:
+                vectorModels0, vectorModels1 = self._vectorToModels(query_index=query_index, n=n)
+                vectorModels = vectorModels1.append(vectorModels0)
+            pd.set_option('display.max_rows', len(vectorModels))
+            print(f"Generated dataframe with {vectorModels.shape[0]} rows and {vectorModels.shape[1]} columns")  # noqa
+            return query, vectorModels.drop_duplicates().sort_values(by="animeScore", ascending=False)
+        except AttributeError:
+            return None
 
 
