@@ -25,7 +25,7 @@ async def api_docs():
     return RedirectResponse(url='/docs')
 
 
-# Anime ID, Find most similar anime from MAL (My Anime List) ID
+# Get anime recommendation
 @app.get("/api/recommendations/")
 async def get_anime_recommendation(anime_id: int = None, n: int = None, anime_name: str = None):
     if not n:
@@ -41,7 +41,6 @@ async def get_anime_recommendation(anime_id: int = None, n: int = None, anime_na
         if not anime_name:
             return getnAnimeById(anime_id=anime_id, n=n)
         if not anime_id:
-            print(anime_name)
             return getnAnimeByName(anime_name=anime_name, n=n)
         if not anime_name and not anime_id:
             return {
@@ -50,7 +49,6 @@ async def get_anime_recommendation(anime_id: int = None, n: int = None, anime_na
 
 
 # Get Anime Database
-# Get Anime name
 @app.get("/api/data/")
 async def get_anime_name(anime_id: int = None, n: int = None, anime_name: str = None):
 
