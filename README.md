@@ -52,3 +52,6 @@ By default, this app is using FastAPI to create an API. To run the API, run this
   `python main.py`
 
 then, type in the browser `http://127.0.0.1/api` or `http://127.0.0.1/docs` to see documentation.
+
+# SOON
+Upgrade to Elasticsearch to make search query faster
