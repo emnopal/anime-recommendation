@@ -1,12 +1,12 @@
 if __name__ == '__main__':
     try:
         import os
-        os.system('uvicorn api.main_api:app --reload --port 5500')
+        os.system('uvicorn api.main:app --reload --port 5500')
     except KeyboardInterrupt:
         print("Session ended, run python main.py to run the app again")
     except ImportError:
         os.system('python -m pip install -r requirements.txt')
-    except:
+    except Exception:
         print("""
         Error: There is unexpected error.
         Please check the following issues:

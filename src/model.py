@@ -1,4 +1,6 @@
-import sys; sys.path.append('..')  # noqa
+import sys
+sys.path.append('..')
+
 import numpy as np
 
 from scipy.sparse import csr_matrix
@@ -19,5 +21,5 @@ def defineModels(n, vector, query_index, *args, **kwargs):
             vector[query_index, :].reshape(1, -1),
             n_neighbors=n)
         return distances, indices
-    except:
+    except Exception:
         raise NotFoundError("Data is Not Found")

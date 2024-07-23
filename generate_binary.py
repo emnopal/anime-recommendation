@@ -1,4 +1,4 @@
-from utils.generate import generate
+from generate import run_binary
 
 if __name__ == "__main__":
     """
@@ -27,4 +27,4 @@ if __name__ == "__main__":
                     --- ...
             6. Run this script: python generate_data.py
     """
-    generate()
+    run_binary()

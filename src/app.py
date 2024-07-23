@@ -9,9 +9,8 @@ But you can generate by yourself in this_repository/notebook file
 to create *.npz. and *.npy files.
 """
 
-
-from os import name
-import sys; sys.path.append('..')  # noqa
+import sys
+sys.path.append('..')
 
 import pandas as pd
 
@@ -160,5 +159,3 @@ class ContentBasedFiltering:
             return query, vectorModels.drop_duplicates().sort_values(by="animeScore", ascending=False)
         except AttributeError:
             return None
-
-

@@ -9,20 +9,32 @@ from utils.profiling import timeit
 def convert_to_html(df, df2=None, path=f"{os.getcwd()}/output"):
     if not os.path.exists(path):
         os.makedirs(path)
+
     now = time.strftime("%Y%m%d-%H%M%S")
     name = f"{path}/temp-{now}.html"
+
     if df2 is None:
         df.to_html(name, index=False)
         print(f"Open Here: {name}")
     else:
-        df0_html = '<table border="1" class="dataframe"><thead><tr style="text-align: right;"><th>MAL_ID</th><th>Name</th><th>Score</th><th>Genres</th><th>Synopsis</th><th>Type</th><th>Episodes</th><th>Premiered</th><th>Studios</th><th>Source</th><th>Rating</th><th>Ranked</th><th>Popularity</th><th>Favorites</th></tr></thead><tbody>'  # noqa
+        df0_html = '<table border="1" class="dataframe"><thead><tr style="text-align: right;"><th>MAL_ID</th>\
+                    <th>Name</th><th>Score</th><th>Genres</th><th>Synopsis</th><th>Type</th><th>Episodes</th>\
+                    <th>Premiered</th><th>Studios</th><th>Source</th><th>Rating</th><th>Ranked</th>\
+                    <th>Popularity</th><th>Favorites</th></tr></thead><tbody>'
+
         for idx in df.index:
             df0_html += '<tr>'
             for cols in df.columns:
                 df0_html += f'<td>{df[cols][idx]}</td>'
             df0_html += '</tr>'
+
         df0_html += '</tbody></table>'
-        df1_html = '<table border="1" class="dataframe"><thead><tr style="text-align: right;"><th>MAL_ID</th><th>Name</th><th>Score</th><th>Genres</th><th>Synopsis</th><th>Type</th><th>Episodes</th><th>Premiered</th><th>Studios</th><th>Source</th><th>Rating</th><th>Ranked</th><th>Popularity</th><th>Favorites</th></tr></thead><tbody>'  # noqa
+        df1_html = '<table border="1" class="dataframe"><thead><tr style="text-align: right;">\
+                    <th>MAL_ID</th><th>Name</th><th>Score</th><th>Genres</th><th>Synopsis</th>\
+                    <th>Type</th><th>Episodes</th><th>Premiered</th><th>Studios</th>\
+                    <th>Source</th><th>Rating</th><th>Ranked</th><th>Popularity</th>\
+                    <th>Favorites</th></tr></thead><tbody>'
+
         for idx in df2.index:
             df1_html += '<tr>'
             for cols in df2.columns:

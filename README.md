@@ -54,5 +54,5 @@ By default, this app is using FastAPI to create an API. To run the API, run this
 then, type in the browser `http://127.0.0.1/api` or `http://127.0.0.1/docs` to see documentation.
 
 # SOON
-1. Upgrade to Elasticsearch to make search query faster
+1. Upgrade to Elasticsearch to make search query faster (partialy done)
 2. Update anime database

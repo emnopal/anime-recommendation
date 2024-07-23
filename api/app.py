@@ -1,4 +1,5 @@
-import sys; sys.path.append('..')
+import sys
+sys.path.append('..')
 
 from src.app import ContentBasedFiltering
 from utils.exporting import convert_to_json_api
@@ -11,8 +12,8 @@ from utils.profiling import timeit
 def Anime():
     conn = connect()
     set_index = 'animeIndex'
-    vector = "data/binary/anime_metadata.npy"
-    vector1 = "data/binary/animeFeaturesTfidf.npz"
+    vector = "data/binary/animeMetadata.npy"
+    vector1 = "data/binary/animeFeatures.npz"
     content = ContentBasedFiltering(vector1=vector, vector2=vector1, dataset='use SQL', index_col=set_index, conn=conn)
     return content
 
